@@ -6,7 +6,8 @@
   <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css?family=Material+Icons" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/@mdi/font@3.x/css/materialdesignicons.min.css" rel="stylesheet">
-  <link href="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.min.css" rel="stylesheet">
+  <!-- <link href="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.min.css" rel="stylesheet"> -->
+  <link href="css/vuetify.min.css" rel="stylesheet">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
   <style>
     [v-cloak]>* {
@@ -22,20 +23,37 @@
 <body>
   <div id="app" v-cloak>
     <v-app>
-      <h1>App</h1>
-      <p>
-        <router-link to="/">Home</router-link>
-        <router-link to="/about">About</router-link>
-      </p>
-      <router-view></router-view>
+      <v-content>
+        <v-container>
+          <v-layout>
+            <v-flex xs12 sm6 offset-sm3>
+              <v-card>
+                <router-view></router-view>
+                <v-card-actions>
+                  <v-btn to="/" text>Home</v-btn>
+                  <v-btn to="/about" text>About</v-btn>
+                </v-card-actions>
+              </v-card>
+            </v-flex>
+          </v-layout>
+        </v-container>
+      </v-content>
     </v-app>
   </div>
 
+  <!--
   <script src="https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js"></script>
   <script src="https://unpkg.com/vuex"></script>
   <script src="https://unpkg.com/vue-router/dist/vue-router.js"></script>
   <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.js"></script>
+  -->
+
+  <script src="js/vue.js"></script>
+  <script src="js/vuex.js"></script>
+  <script src="js/vue-router.js"></script>
+  <script src="js/axios.min.js"></script>
+  <script src="js/vuetify.js"></script>
 
   <script>
     var Home = Vue.component('home', {
@@ -44,7 +62,12 @@
 
         };
       },
-      template: `<div>Home</div>`
+      template: `<div>
+        <v-card-text>
+          <h1>Las cosas deberían ser tan simples como fuera posible, pero no más.</h1>
+          Albert Einstein
+        </v-card-text>
+      </div>`
     });
 
     var About = Vue.component('about', {
@@ -53,7 +76,12 @@
 
         };
       },
-      template: `<div>About</div>`
+      template: `<div>
+        <v-card-title>Pensamientos</v-card-title>
+        <v-card-text>
+          Por Antonio Kobashikawa
+        </v-card-text>
+      </div>`
     });
 
     var router = new VueRouter({
