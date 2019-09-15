@@ -54,6 +54,7 @@
   <script src="js/vue-router.js"></script>
   <script src="js/axios.min.js"></script>
   <script src="js/vuetify.js"></script>
+  <script src="https://unpkg.com/papaparse@latest/papaparse.min.js"> </script>
 
   <script>
     var Home = Vue.component('home', {
@@ -118,10 +119,24 @@
       vuetify: new Vuetify(),
       data() {
         return {
-
+          pensamientos: [],
         };
       },
+      mounted() {
+        this.getPensamientos();
+      },
       methods: {
+        getPensamientos: async function () {
+          const self = this;
+          const url = `https://docs.google.com/spreadsheets/d/1IrPN1m6Z8cagVPTfiZs3ZuRTPJLgq--ajbhEPMBNNxY/export?format=csv`;
+          Papa.parse(url, {
+            download: true,
+            header: true,
+            complete: function (results) {
+              self.pensamientos = results.data;
+            }
+          });
+        }
       }
     }).$mount('#app');
   </script>
