@@ -12,11 +12,46 @@
     [v-cloak]::before {
       content: "…"
     }
+
+    html, body {
+      height: 100%;
+    }
+
+    .app-page {
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .home-component {
+      text-align: center;
+    }
+    .quote-text {
+      font-size: 2em;
+    }
+    .quote-text::before {
+      content: "“";
+    }
+    .quote-text::after {
+      content: "”";
+    }
+    .quote-author {
+      font-style: italic;
+    }
+    .quote-author::before {
+      content: "— ";
+    }
+
+    .next-btn {
+      border-radius: 10px;
+      outline: none;
+    }
   </style>
 </head>
 
 <body>
-  <div id="app" v-cloak>
+  <div id="app" class="app-page" v-cloak>
     <router-view></router-view>
   </div>
 
@@ -34,6 +69,7 @@
   <script src="js/vue-router.js"></script>
   <script src="js/axios.min.js"></script>
   <script src="js/papaparse.min.js"> </script>
+  <script src="https://ajax.googleapis.com/ajax/libs/webfont/1.6.26/webfont.js"></script>
 
   <script>
     // Muestra una cita al azar del conjunto de citas obtenido de una google sheet
@@ -41,40 +77,86 @@
       data() {
         return {
           datasheetURL: 'https://docs.google.com/spreadsheets/d/1IrPN1m6Z8cagVPTfiZs3ZuRTPJLgq--ajbhEPMBNNxY',
+          fonts: [],
+          font: 'Roboto',
           quotes: [],
+          quote: null,
         };
       },
       mounted() {
-        this.getQuotes();
+        this.showRandomQuote();
       },
       computed: {
-        quote() {
-          if (this.quotes.length == 0) {
+      },
+      methods: {
+        showRandomQuote: async function() {
+          try {
+            if (this.quotes.length == 0) {
+              const quotes = await this.getQuotes();
+              this.quotes = quotes;
+            }
+            this.quote = this.getRandomQuote();
+
+            if (this.fonts.length == 0) {
+              const fonts = await this.getFonts();
+              this.fonts = fonts;
+            }
+            this.font = this.getRandomFont();
+          } catch (error) {
+            
+          }
+        },
+        getQuotes: function () {
+          const self = this;
+          const url = `${this.datasheetURL}/export?format=csv`;
+          return new Promise(resolve => {
+            Papa.parse(url, {
+              download: true,
+              header: true,
+              complete: function (results) {
+                resolve(results.data);
+              }
+            });
+          });
+        },
+        getRandomQuote: function() {
+          if (this.quotes.length === 0) {
             return {};
           }
           const i = Math.floor(Math.random() * this.quotes.length);
           const quote = this.quotes[i];
           return quote;
-        }
-      },
-      methods: {
-        getQuotes: async function () {
-          const self = this;
-          const url = `${this.datasheetURL}/export?format=csv`;
-          Papa.parse(url, {
-            download: true,
-            header: true,
-            complete: function (results) {
-              self.quotes = results.data;
+        },
+        getFonts: async function () {
+          const API_KEY = 'AIzaSyDDiO8nLVRMDaXwrJp61Cdcar5gFmmiR1Q'
+          const url = `https://www.googleapis.com/webfonts/v1/webfonts?key=${API_KEY}`;
+          try {
+            const result = await axios.get(url);
+            return result.data.items;
+          } catch (error) {
+            throw error;
+          }
+        },
+        getRandomFont: function() {
+          if (this.fonts.length === 0) {
+            return 'Roboto';
+          }
+          const i = Math.floor(Math.random() * this.fonts.length);
+          const font = this.fonts[i].family;
+          WebFont.load({
+            google: {
+              families: [font]
             }
           });
-        }
+          return font;
+        },
       },
-      template: `<div>
+      template: `<div class="home-component">
         <blockquote v-if="quote">
-          <div class="quote-text">{{ quote.cita }}</div>
+          <div class="quote-text" :style="{fontFamily: font}" :title="font">{{ quote.cita }}</div>
           <div class="quote-author">{{ quote.autor }}</div>
         </blockquote>
+        <button type="button" class="next-btn" @click="showRandomQuote">Siguiente</button>
       </div>`
     });
 
