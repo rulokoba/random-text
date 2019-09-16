@@ -36,9 +36,11 @@
   <script src="js/papaparse.min.js"> </script>
 
   <script>
+    // Muestra una cita al azar del conjunto de citas obtenido de una google sheet
     var Home = Vue.component('home', {
       data() {
         return {
+          datasheetURL: 'https://docs.google.com/spreadsheets/d/1IrPN1m6Z8cagVPTfiZs3ZuRTPJLgq--ajbhEPMBNNxY',
           quotes: [],
         };
       },
@@ -47,15 +49,18 @@
       },
       computed: {
         quote() {
-          const i = 0;
-          const quote = this.quotes.length >= i ? this.quotes[i] : null;
+          if (this.quotes.length == 0) {
+            return {};
+          }
+          const i = Math.floor(Math.random() * this.quotes.length);
+          const quote = this.quotes[i];
           return quote;
         }
       },
       methods: {
         getQuotes: async function () {
           const self = this;
-          const url = `https://docs.google.com/spreadsheets/d/1IrPN1m6Z8cagVPTfiZs3ZuRTPJLgq--ajbhEPMBNNxY/export?format=csv`;
+          const url = `${this.datasheetURL}/export?format=csv`;
           Papa.parse(url, {
             download: true,
             header: true,
@@ -67,7 +72,7 @@
       },
       template: `<div>
         <blockquote v-if="quote">
-          <div class="quote-text">{{ quote.pensamiento }}</div>
+          <div class="quote-text">{{ quote.cita }}</div>
           <div class="quote-author">{{ quote.autor }}</div>
         </blockquote>
       </div>`
