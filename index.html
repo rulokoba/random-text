@@ -24,6 +24,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
+      transition: background-color 0.5s ease-out;
     }
 
     .home-component {
@@ -35,6 +36,7 @@
       box-shadow: 0 5px 10px 1px #0003;
       border-radius: 1em;
       cursor: pointer;
+      transition: background-color 0.5s ease-out;
     }
     .quote-text {
       font-size: 2em;
@@ -58,7 +60,7 @@
 </head>
 
 <body>
-  <div id="app" class="app-page" :style="{backgroundColor}" v-cloak @click.self="updateBackgroundColor">
+  <div id="app" class="app-page" :style="{backgroundColor}" v-cloak @click.self="updateBackgroundColor" @dblclick="showRandomQuote">
     <router-view @quotechanged="setRandomBackgorundColor"></router-view>
   </div>
 
@@ -309,10 +311,14 @@
           this.backgroundColor = color;
         },
         updateBackgroundColor: function() {
-          console.log(this.$router);
-          const color = this.$router.app.$children[0].getRandomBackgroundColorPage();
+          const homeComponent = this.$router.app.$children[0];
+          const color = homeComponent.getRandomBackgroundColorPage();
           this.backgroundColor = color;
-        }
+        },
+        showRandomQuote: function () {
+          const homeComponent = this.$router.app.$children[0];
+          homeComponent.showRandomQuote();
+        },
       }
     }).$mount('#app');
   </script>
