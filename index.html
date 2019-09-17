@@ -58,7 +58,7 @@
 </head>
 
 <body>
-  <div id="app" class="app-page" :style="{backgroundColor}" v-cloak>
+  <div id="app" class="app-page" :style="{backgroundColor}" v-cloak @click.self="updateBackgroundColor">
     <router-view @quotechanged="setRandomBackgorundColor"></router-view>
   </div>
 
@@ -235,7 +235,11 @@
             },
           ];
           const result = htypes[this.random(htypes.length)].f();
-          console.log(result);
+          return result;
+        },
+        getRandomBackgroundColorPage: function() {
+          const a = this.random(360);
+          const result = `hsl(${a}, ${50 + this.random(50)}%, ${50 + this.random(50)}%)`;
           return result;
         },
       },
@@ -267,7 +271,8 @@
         {
           path: '/',
           name: 'home',
-          component: Home
+          component: Home,
+          ref: 'home'
         },
         {
           path: '/about',
@@ -301,6 +306,11 @@
       },
       methods: {
         setRandomBackgorundColor: function(color) {
+          this.backgroundColor = color;
+        },
+        updateBackgroundColor: function() {
+          console.log(this.$router);
+          const color = this.$router.app.$children[0].getRandomBackgroundColorPage();
           this.backgroundColor = color;
         }
       }
