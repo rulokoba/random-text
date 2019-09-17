@@ -16,6 +16,7 @@
 
     html, body {
       height: 100%;
+      margin: 0;
     }
 
     .app-page {
@@ -23,7 +24,6 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      background-color: #cef;
     }
 
     .home-component {
@@ -57,8 +57,8 @@
 </head>
 
 <body>
-  <div id="app" class="app-page" v-cloak>
-    <router-view></router-view>
+  <div id="app" class="app-page" :style="{backgroundColor}" v-cloak>
+    <router-view @quotechanged="setRandomBackgorundColor"></router-view>
   </div>
 
   <!--
@@ -87,6 +87,23 @@
           font: 'Roboto',
           quotes: [],
           quote: null,
+          styles: [
+            {backgroundColorPage: '#cef', backgroundColor: '#fffc', color: '#000'},
+            {backgroundColorPage: '#eff', backgroundColor: '#cef', color: '#000'},
+            {backgroundColorPage: 'lime', backgroundColor: '#fffa', color: 'green'},
+            {backgroundColorPage: '#5f5', backgroundColor: 'lime', color: '#fff'},
+            {backgroundColorPage: 'purple', backgroundColor: '#fff6', color: '#fff'},
+            {backgroundColorPage: '#f5f', backgroundColor: 'purple', color: '#fff'},
+            {backgroundColorPage: 'cyan', backgroundColor: '#fff5', color: '#000'},
+            {backgroundColorPage: '#8ff', backgroundColor: 'cyan', color: '#000'},
+            {backgroundColorPage: 'magenta', backgroundColor: '#fff5', color: '#fff'},
+            {backgroundColorPage: '#f5f', backgroundColor: 'magenta', color: '#fff'},
+            {backgroundColorPage: 'yellow', backgroundColor: '#fffb', color: '#000'},
+            {backgroundColorPage: '#ffa', backgroundColor: 'yellow', color: '#000'},
+            {backgroundColorPage: 'navy', backgroundColor: '#fff8', color: '#fff'},
+            {backgroundColorPage: 'blue', backgroundColor: 'navy', color: '#fff'},
+          ],
+          style: null,
         };
       },
       mounted() {
@@ -109,6 +126,8 @@
 
             this.font = await this.getRandomFont();
             this.quote = this.getRandomQuote();
+            this.style = this.getRandomStyle();
+            this.$emit('quotechanged', this.style.backgroundColorPage);
           } catch (error) {
             console.log(error);
           }
@@ -163,9 +182,13 @@
             });
           });
         },
+        getRandomStyle: function() {
+          const i = Math.floor(Math.random() * this.styles.length);
+          return this.styles[i];
+        },
       },
       template: `<div class="home-component">
-        <blockquote class="quote" v-if="quote" @click="showRandomQuote">
+        <blockquote class="quote" v-if="quote" :style="{backgroundColor: style.backgroundColor, color: style.color}" @click="showRandomQuote">
           <div class="quote-text" :style="{fontFamily: font}" :title="font">{{ quote.cita }}</div>
           <div class="quote-author">{{ quote.autor }}</div>
         </blockquote>
@@ -219,11 +242,15 @@
       store,
       data() {
         return {
+          backgroundColor: '#cef',
         };
       },
       mounted() {
       },
       methods: {
+        setRandomBackgorundColor: function(color) {
+          this.backgroundColor = color;
+        }
       }
     }).$mount('#app');
   </script>
