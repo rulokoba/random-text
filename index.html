@@ -87,22 +87,6 @@
           font: 'Roboto',
           quotes: [],
           quote: null,
-          styles: [
-            {backgroundColorPage: '#cef', backgroundColor: '#fffc', color: '#000'},
-            {backgroundColorPage: '#eff', backgroundColor: '#cef', color: '#000'},
-            {backgroundColorPage: 'lime', backgroundColor: '#fffa', color: 'green'},
-            {backgroundColorPage: '#5f5', backgroundColor: 'lime', color: '#fff'},
-            {backgroundColorPage: 'purple', backgroundColor: '#fff6', color: '#fff'},
-            {backgroundColorPage: '#f5f', backgroundColor: 'purple', color: '#fff'},
-            {backgroundColorPage: 'cyan', backgroundColor: '#fff5', color: '#000'},
-            {backgroundColorPage: '#8ff', backgroundColor: 'cyan', color: '#000'},
-            {backgroundColorPage: 'magenta', backgroundColor: '#fff5', color: '#fff'},
-            {backgroundColorPage: '#f5f', backgroundColor: 'magenta', color: '#fff'},
-            {backgroundColorPage: 'yellow', backgroundColor: '#fffb', color: '#000'},
-            {backgroundColorPage: '#ffa', backgroundColor: 'yellow', color: '#000'},
-            {backgroundColorPage: 'navy', backgroundColor: '#fff8', color: '#fff'},
-            {backgroundColorPage: 'blue', backgroundColor: 'navy', color: '#fff'},
-          ],
           style: null,
         };
       },
@@ -112,6 +96,9 @@
       computed: {
       },
       methods: {
+        random: function(n) {
+          return Math.floor(Math.random() * n);
+        },
         showRandomQuote: async function() {
           try {
             if (this.quotes.length == 0) {
@@ -149,7 +136,7 @@
           if (this.quotes.length === 0) {
             return {};
           }
-          const i = Math.floor(Math.random() * this.quotes.length);
+          const i = this.random(this.quotes.length);
           const quote = this.quotes[i];
           return quote;
         },
@@ -167,7 +154,7 @@
           if (this.fonts.length === 0) {
             return 'Roboto';
           }
-          const i = Math.floor(Math.random() * this.fonts.length);
+          const i = this.random(this.fonts.length);
           const font = this.fonts[i].family;
           return new Promise(resolve => {
             // https://github.com/typekit/webfontloader
@@ -183,8 +170,46 @@
           });
         },
         getRandomStyle: function() {
-          const i = Math.floor(Math.random() * this.styles.length);
-          return this.styles[i];
+          // color harmony types
+          const htypes = [
+            {
+              name: 'mono',
+              f: () => {
+                const a = this.random(360);
+                backgroundColorPage = `hsl(${a}, ${50 + this.random(50)}%, ${25 + this.random(50)}%)`;
+                backgroundColor = `#fff8`;
+                const colors = ['#000'];
+                color = colors[this.random(colors.length)];
+                return { backgroundColorPage, backgroundColor, color};
+              }
+            },
+            {
+              name: 'monoi',
+              f: () => {
+                const a = this.random(360);
+                backgroundColorPage = `hsl(${a}, ${50 + this.random(50)}%, ${50 + this.random(50)}%)`;
+                backgroundColor = `hsl(${a}, ${50 + this.random(50)}%, ${25 + this.random(25)}%)`;
+                const colors = ['#fff'];
+                color = colors[this.random(colors.length)];
+                return { backgroundColorPage, backgroundColor, color};
+              }
+            },
+            {
+              name: 'complementary',
+              f: () => {
+                const a = this.random(360);
+                const b = (a + 180) % 360;
+                backgroundColorPage = `hsl(${a}, ${50 + this.random(50)}%, ${50 + this.random(50)}%)`;
+                backgroundColor = `hsl(${b}, ${50 + this.random(50)}%, ${25 + this.random(25)}%)`;
+                const colors = ['#000', '#fff'];
+                color = colors[this.random(colors.length)];
+                return { backgroundColorPage, backgroundColor, color};
+              }
+            },
+          ];
+          const result = htypes[this.random(htypes.length)].f();
+          console.log(result);
+          return result;
         },
       },
       template: `<div class="home-component">
