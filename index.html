@@ -48,6 +48,7 @@
     .quote-author {
       font-style: italic;
       margin-top: 1em;
+      display: inline-block;
     }
     .quote-author::before {
       content: "— ";
@@ -180,6 +181,13 @@
             });
           });
         },
+        updateRandomFont: async function() {
+          try {
+            this.font = await this.getRandomFont();
+          } catch (error) {
+            console.log(error);
+          }
+        },
         getRandomStyle: function() {
           // color harmony types
           const htypes = [
@@ -225,7 +233,7 @@
       },
       template: `<div class="home-component">
         <blockquote class="quote" v-if="quote" :style="{backgroundColor: style.backgroundColor, color: style.color}">
-          <div class="quote-text" :style="{fontFamily: font}" :title="font">{{ quote.cita }}</div>
+          <div class="quote-text" :style="{fontFamily: font}" :title="font" @click="updateRandomFont">{{ quote.cita }}</div>
           <div class="quote-author" @click="updateRandomQuote">{{ quote.autor }}</div>
         </blockquote>
       </div>`
