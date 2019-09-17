@@ -188,7 +188,7 @@
             console.log(error);
           }
         },
-        updateRandomBGColor: function() {
+        updateRandomQuoteColor: function() {
           const a = this.random(360);
           backgroundColor = `hsl(${a}, ${50 + this.random(50)}%, ${25 + this.random(25)}%)`;
           const colors = ['#000', '#fff'];
@@ -240,7 +240,7 @@
         },
       },
       template: `<div class="home-component">
-        <blockquote class="quote" v-if="quote" :style="{backgroundColor: style.backgroundColor, color: style.color}" @click.self="updateRandomBGColor">
+        <blockquote class="quote" v-if="quote" :style="{backgroundColor: style.backgroundColor, color: style.color}" @click.self="updateRandomQuoteColor">
           <div class="quote-text" :style="{fontFamily: font}" :title="font" @click="updateRandomFont">{{ quote.cita }}</div>
           <div class="quote-author" @click="updateRandomQuote">{{ quote.autor }}</div>
         </blockquote>
