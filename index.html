@@ -101,13 +101,14 @@
               const quotes = await this.getQuotes();
               this.quotes = quotes;
             }
-            this.quote = this.getRandomQuote();
 
             if (this.fonts.length == 0) {
               const fonts = await this.getFonts();
               this.fonts = fonts;
             }
-            this.font = this.getRandomFont();
+
+            this.font = await this.getRandomFont();
+            this.quote = this.getRandomQuote();
           } catch (error) {
             console.log(error);
           }
@@ -149,12 +150,18 @@
           }
           const i = Math.floor(Math.random() * this.fonts.length);
           const font = this.fonts[i].family;
-          WebFont.load({
-            google: {
-              families: [font]
-            }
+          return new Promise(resolve => {
+            // https://github.com/typekit/webfontloader
+            WebFont.load({
+              classes: false,
+              google: {
+                families: [font]
+              },
+              active: function () {
+                resolve(font);
+              },
+            });
           });
-          return font;
         },
       },
       template: `<div class="home-component">
