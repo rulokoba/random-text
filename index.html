@@ -119,6 +119,17 @@
             console.log(error);
           }
         },
+        updateRandomQuote: async function() {
+          try {
+            if (this.quotes.length == 0) {
+              const quotes = await this.getQuotes();
+              this.quotes = quotes;
+            }
+            this.quote = this.getRandomQuote();
+          } catch (error) {
+            console.log(error);
+          }
+        },
         getQuotes: function () {
           const self = this;
           const url = `${this.datasheetURL}/export?format=csv`;
@@ -213,9 +224,9 @@
         },
       },
       template: `<div class="home-component">
-        <blockquote class="quote" v-if="quote" :style="{backgroundColor: style.backgroundColor, color: style.color}" @click="showRandomQuote">
+        <blockquote class="quote" v-if="quote" :style="{backgroundColor: style.backgroundColor, color: style.color}">
           <div class="quote-text" :style="{fontFamily: font}" :title="font">{{ quote.cita }}</div>
-          <div class="quote-author">{{ quote.autor }}</div>
+          <div class="quote-author" @click="updateRandomQuote">{{ quote.autor }}</div>
         </blockquote>
       </div>`
     });
