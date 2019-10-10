@@ -2,7 +2,7 @@
 <html>
 
 <head>
-  <title>Pensamientos</title>
+  <title>Random Text</title>
   <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css?family=Material+Icons" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/@mdi/font@3.x/css/materialdesignicons.min.css" rel="stylesheet">
@@ -78,7 +78,7 @@
         };
       },
       template: `<div>
-        <v-card-title>Pensamientos</v-card-title>
+        <v-card-title>Random Text</v-card-title>
         <v-card-text>
           Por Antonio Kobashikawa
         </v-card-text>
@@ -119,21 +119,21 @@
       vuetify: new Vuetify(),
       data() {
         return {
-          pensamientos: [],
+          items: [],
         };
       },
       mounted() {
-        this.getPensamientos();
+        this.getItems();
       },
       methods: {
-        getPensamientos: async function () {
+        getItems: async function () {
           const self = this;
-          const url = `https://docs.google.com/spreadsheets/d/1IrPN1m6Z8cagVPTfiZs3ZuRTPJLgq--ajbhEPMBNNxY/export?format=csv`;
+          const url = `https://docs.google.com/spreadsheets/d/14gN_yQeC_PPOuZ6S0Mh2iJv7TwNJia7iiA5LWRHyrnk/export?format=csv`;
           Papa.parse(url, {
             download: true,
             header: true,
             complete: function (results) {
-              self.pensamientos = results.data;
+              self.items = results.data;
             }
           });
         }
