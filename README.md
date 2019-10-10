@@ -1,2 +1,2 @@
-# pensamientos
-Muestra citas de manera aleatoria
+# random text
+Muestra texto de manera aleatoria
