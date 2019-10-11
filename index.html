@@ -85,7 +85,7 @@
     var Home = Vue.component('home', {
       data() {
         return {
-          datasheetURL: 'https://docs.google.com/spreadsheets/d/1IrPN1m6Z8cagVPTfiZs3ZuRTPJLgq--ajbhEPMBNNxY',
+          datasheetURL: 'https://docs.google.com/spreadsheets/d/14gN_yQeC_PPOuZ6S0Mh2iJv7TwNJia7iiA5LWRHyrnk',
           fonts: [],
           font: 'Roboto',
           quotes: [],
@@ -162,8 +162,7 @@
       },
       template: `<div class="home-component">
         <blockquote class="quote" v-if="quote">
-          <div class="quote-text" :style="{fontFamily: font}" :title="font">{{ quote.cita }}</div>
-          <div class="quote-author">{{ quote.autor }}</div>
+          <div class="quote-text" :style="{fontFamily: font}" :title="font">{{ quote[0] }}</div>
         </blockquote>
         <a href="#" class="next-btn" @click="showRandomQuote">Siguiente</a>
       </div>`
