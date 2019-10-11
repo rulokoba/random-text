@@ -2,43 +2,74 @@
 <html>
 
 <head>
-  <title>Random Text</title>
-  <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css?family=Material+Icons" rel="stylesheet">
-  <link href="https://cdn.jsdelivr.net/npm/@mdi/font@3.x/css/materialdesignicons.min.css" rel="stylesheet">
-  <!-- <link href="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.min.css" rel="stylesheet"> -->
-  <link href="css/vuetify.min.css" rel="stylesheet">
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>Pensamientos</title>
   <style>
     [v-cloak]>* {
       display: none
     }
 
     [v-cloak]::before {
-      content: "loading…"
+      content: "…"
+    }
+
+    html, body {
+      height: 100%;
+    }
+
+    .app-page {
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: #cef;
+    }
+
+    .home-component {
+      text-align: center;
+    }
+    .quote {
+      background-color: #fff;
+      padding: 1em;
+      box-shadow: 0 5px 10px 1px #0003;
+      border-radius: 1em;
+    }
+    .quote-text {
+      font-size: 2em;
+    }
+    .quote-text::before {
+      content: "“";
+    }
+    .quote-text::after {
+      content: "”";
+    }
+    .quote-author {
+      font-style: italic;
+      margin-top: 1em;
+    }
+    .quote-author::before {
+      content: "— ";
+    }
+
+    a.next-btn {
+      font-family: Arial, Helvetica, sans-serif;
+      text-decoration: none;
+      color: #000;
+      background-color: #fff3;
+      border: 2px solid #fff8;
+      border-radius: 1em;
+      padding: 5px 10px;
+      display: inline-block;
+      position: relative;
+      top: 1em;
     }
   </style>
 </head>
 
 <body>
-  <div id="app" v-cloak>
-    <v-app>
-      <v-content>
-        <v-container>
-          <v-layout>
-            <v-flex xs12 sm6 offset-sm3>
-              <v-card>
-                <router-view></router-view>
-                <v-card-actions>
-                  <v-btn to="/" text>Home</v-btn>
-                  <v-btn to="/about" text>About</v-btn>
-                </v-card-actions>
-              </v-card>
-            </v-flex>
-          </v-layout>
-        </v-container>
-      </v-content>
-    </v-app>
+  <div id="app" class="app-page" v-cloak>
+    <router-view></router-view>
   </div>
 
   <!--
@@ -47,27 +78,102 @@
   <script src="https://unpkg.com/vue-router/dist/vue-router.js"></script>
   <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.js"></script>
+  <script src="https://unpkg.com/papaparse@latest/papaparse.min.js"> </script>
   -->
 
   <script src="js/vue.js"></script>
   <script src="js/vuex.js"></script>
   <script src="js/vue-router.js"></script>
   <script src="js/axios.min.js"></script>
-  <script src="js/vuetify.js"></script>
-  <script src="https://unpkg.com/papaparse@latest/papaparse.min.js"> </script>
+  <script src="js/papaparse.min.js"> </script>
+  <script src="https://ajax.googleapis.com/ajax/libs/webfont/1.6.26/webfont.js"></script>
 
   <script>
+    // Muestra una cita al azar del conjunto de citas obtenido de una google sheet
     var Home = Vue.component('home', {
       data() {
         return {
-
+          datasheetURL: 'https://docs.google.com/spreadsheets/d/1IrPN1m6Z8cagVPTfiZs3ZuRTPJLgq--ajbhEPMBNNxY',
+          fonts: [],
+          font: 'Roboto',
+          quotes: [],
+          quote: null,
         };
       },
-      template: `<div>
-        <v-card-text>
-          <h1>Las cosas deberían ser tan simples como fuera posible, pero no más.</h1>
-          Albert Einstein
-        </v-card-text>
+      mounted() {
+        this.showRandomQuote();
+      },
+      computed: {
+      },
+      methods: {
+        showRandomQuote: async function() {
+          try {
+            if (this.quotes.length == 0) {
+              const quotes = await this.getQuotes();
+              this.quotes = quotes;
+            }
+            this.quote = this.getRandomQuote();
+
+            if (this.fonts.length == 0) {
+              const fonts = await this.getFonts();
+              this.fonts = fonts;
+            }
+            this.font = this.getRandomFont();
+          } catch (error) {
+            console.log(error);
+          }
+        },
+        getQuotes: function () {
+          const self = this;
+          const url = `${this.datasheetURL}/export?format=csv`;
+          return new Promise(resolve => {
+            Papa.parse(url, {
+              download: true,
+              header: true,
+              complete: function (results) {
+                resolve(results.data);
+              }
+            });
+          });
+        },
+        getRandomQuote: function() {
+          if (this.quotes.length === 0) {
+            return {};
+          }
+          const i = Math.floor(Math.random() * this.quotes.length);
+          const quote = this.quotes[i];
+          return quote;
+        },
+        getFonts: async function () {
+          const API_KEY = 'AIzaSyDDiO8nLVRMDaXwrJp61Cdcar5gFmmiR1Q'
+          const url = `https://www.googleapis.com/webfonts/v1/webfonts?key=${API_KEY}`;
+          try {
+            const result = await axios.get(url);
+            return result.data.items;
+          } catch (error) {
+            throw error;
+          }
+        },
+        getRandomFont: function() {
+          if (this.fonts.length === 0) {
+            return 'Roboto';
+          }
+          const i = Math.floor(Math.random() * this.fonts.length);
+          const font = this.fonts[i].family;
+          WebFont.load({
+            google: {
+              families: [font]
+            }
+          });
+          return font;
+        },
+      },
+      template: `<div class="home-component">
+        <blockquote class="quote" v-if="quote">
+          <div class="quote-text" :style="{fontFamily: font}" :title="font">{{ quote.cita }}</div>
+          <div class="quote-author">{{ quote.autor }}</div>
+        </blockquote>
+        <a href="#" class="next-btn" @click="showRandomQuote">Siguiente</a>
       </div>`
     });
 
@@ -78,10 +184,10 @@
         };
       },
       template: `<div>
-        <v-card-title>Random Text</v-card-title>
-        <v-card-text>
-          Por Antonio Kobashikawa
-        </v-card-text>
+        <h1>Pensamientos</h1>
+        <p>
+          2019 Antonio Kobashikawa
+        </p>
       </div>`
     });
 
@@ -116,27 +222,13 @@
     var app = new Vue({
       router,
       store,
-      vuetify: new Vuetify(),
       data() {
         return {
-          items: [],
         };
       },
       mounted() {
-        this.getItems();
       },
       methods: {
-        getItems: async function () {
-          const self = this;
-          const url = `https://docs.google.com/spreadsheets/d/14gN_yQeC_PPOuZ6S0Mh2iJv7TwNJia7iiA5LWRHyrnk/export?format=csv`;
-          Papa.parse(url, {
-            download: true,
-            header: true,
-            complete: function (results) {
-              self.items = results.data;
-            }
-          });
-        }
       }
     }).$mount('#app');
   </script>
