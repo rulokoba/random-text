@@ -121,7 +121,7 @@
           return new Promise(resolve => {
             Papa.parse(url, {
               download: true,
-              header: true,
+              header: false,
               complete: function (results) {
                 resolve(results.data);
               }
